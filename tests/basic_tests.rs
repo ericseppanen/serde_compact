@@ -1,5 +1,5 @@
-use serde_json;
 use serde_struct_compact::{DeserializeCompact, SerializeCompact};
+use serde_test::{assert_tokens, Token};
 
 #[test]
 fn basic_struct() {
@@ -17,9 +17,19 @@ fn basic_struct() {
         alive: false,
         friends: vec!["Cigoli".to_owned(), "Castelli".to_owned()],
     };
-    let serialized = serde_json::to_string(&gg).unwrap();
-    assert_eq!(serialized, r#"["Galileo",456,false,["Cigoli","Castelli"]]"#);
 
-    let deserialized: MyStruct = serde_json::from_str(&serialized).unwrap();
-    assert_eq!(deserialized, gg);
+    assert_tokens(
+        &gg,
+        &[
+            Token::Tuple { len: 4 },
+            Token::Str("Galileo"),
+            Token::U32(456),
+            Token::Bool(false),
+            Token::Seq { len: Some(2) },
+            Token::Str("Cigoli"),
+            Token::Str("Castelli"),
+            Token::SeqEnd,
+            Token::TupleEnd,
+        ],
+    );
 }
