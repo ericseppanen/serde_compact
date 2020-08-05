@@ -1,9 +1,9 @@
 use serde_json;
-use serde_struct_compact::SerializeCompact;
+use serde_struct_compact::{DeserializeCompact, SerializeCompact};
 
 #[test]
 fn basic_struct() {
-    #[derive(SerializeCompact)]
+    #[derive(Debug, PartialEq, SerializeCompact, DeserializeCompact)]
     pub struct MyStruct {
         name: String,
         age: u32,
@@ -19,4 +19,7 @@ fn basic_struct() {
     };
     let serialized = serde_json::to_string(&gg).unwrap();
     assert_eq!(serialized, r#"["Galileo",456,false,["Cigoli","Castelli"]]"#);
+
+    let deserialized: MyStruct = serde_json::from_str(&serialized).unwrap();
+    assert_eq!(deserialized, gg);
 }
