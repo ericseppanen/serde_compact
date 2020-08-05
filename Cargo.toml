@@ -1,0 +1,22 @@
+[package]
+name = "serde-struct-compact"
+version = "0.1.0"
+edition = "2018"
+
+[features]
+with-testme = []
+
+[lib]
+proc-macro = true
+
+[dependencies]
+quote = "1.0"
+syn = {version = "1.0", features = ["extra-traits"]}
+proc-macro2 = "1.0"
+serde = "1.0"
+serde_derive = "1.0"
+
+[dev-dependencies]
+#trybuild = "1.0"
+serde_derive = "1.0"
+serde_json = "1.0"
