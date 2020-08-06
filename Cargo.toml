@@ -1,5 +1,11 @@
 [package]
 name = "serde-struct-compact"
+description = "Derive Serialize and Deserialize without struct member names"
+keywords = ["serde", "derive", "serialization", "macro"]
+categories = ["encoding"]
+repository = "https://github.com/ericseppanen/serde_compact"
+license = "MIT"
+authors = ["Eric Seppanen <eds@reric.net>"]
 version = "0.1.0"
 edition = "2018"
 
