@@ -103,3 +103,33 @@ fn serialize_by_ref() {
         ],
     );
 }
+
+#[test]
+fn with_generic() {
+    #[derive(SerializeCompact, DeserializeCompact)]
+    pub struct Basic4<T: core::fmt::Display>
+    where
+        T: Clone + Default,
+    {
+        one: T,
+        many: Vec<T>,
+    }
+
+    let instance = Basic4::<String> {
+        one: "hello".to_string(),
+        many: vec!["Hello".to_owned(), "World".to_owned()],
+    };
+
+    assert_ser_tokens(
+        &instance,
+        &[
+            Token::Tuple { len: 2 },
+            Token::Str("hello"),
+            Token::Seq { len: Some(2) },
+            Token::Str("Hello"),
+            Token::Str("World"),
+            Token::SeqEnd,
+            Token::TupleEnd,
+        ],
+    );
+}
