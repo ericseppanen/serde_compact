@@ -1,9 +1,9 @@
-use serde_struct_compact::{DeserializeCompact, SerializeCompact};
+use serde_compact::{Deserialize_compact, Serialize_compact};
 use serde_test::{assert_ser_tokens, assert_tokens, Token};
 
 #[test]
 fn basic() {
-    #[derive(Debug, PartialEq, SerializeCompact, DeserializeCompact)]
+    #[derive(Debug, PartialEq, Serialize_compact, Deserialize_compact)]
     pub struct Basic {
         name: String,
         age: u32,
@@ -36,7 +36,7 @@ fn basic() {
 
 #[test]
 fn basic2() {
-    #[derive(Debug, PartialEq, SerializeCompact, DeserializeCompact)]
+    #[derive(Debug, PartialEq, Serialize_compact, Deserialize_compact)]
     pub struct Basic2 {
         unit: (),
         array: [u8; 3],
@@ -79,7 +79,7 @@ fn basic2() {
 fn serialize_by_ref() {
     // This struct can be serialized but not deserialized, because
     // it doesn't own its contents.
-    #[derive(Debug, PartialEq, SerializeCompact)]
+    #[derive(Debug, PartialEq, Serialize_compact)]
     pub struct Basic3 {
         strref: &'static str,
         slice: &'static [u8],
@@ -106,7 +106,7 @@ fn serialize_by_ref() {
 
 #[test]
 fn with_generic() {
-    #[derive(SerializeCompact, DeserializeCompact)]
+    #[derive(Serialize_compact, Deserialize_compact)]
     pub struct Basic4<T: core::fmt::Display>
     where
         T: Clone + Default,

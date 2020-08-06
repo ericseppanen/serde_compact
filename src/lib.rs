@@ -1,3 +1,33 @@
+//! ## serde-compact: derive macros for compact Serialize and Deserialize
+//!
+//! `serde-compact` provides macros that can derive the `Serialize` and `Deserialize` traits
+//! on structs.  The resulting serialized data has only the member values, and not names.
+//! This can reduce the encoded size of the struct, and make serialization and deserialization
+//! faster.
+//!
+//! ## Example:
+//! ```rust
+//! use serde_compact::{Serialize_compact, Deserialize_compact};
+//!
+//! #[derive(Debug, PartialEq, Serialize_compact, Deserialize_compact)]
+//! pub struct Person {
+//!     name: String,
+//!     age: u32,
+//! }
+//!
+//! let gg = Person {
+//!     name: "Galileo".to_string(),
+//!     age: 456,
+//! };
+//!
+//! let serialized = serde_json::to_string(&gg).unwrap();
+//! assert_eq!(serialized, r#"["Galileo",456]"#);
+//!
+//! let deserialized: Person = serde_json::from_str(&serialized).unwrap();
+//! assert_eq!(deserialized, gg);
+//! ```
+
+
 extern crate proc_macro;
 
 use proc_macro::TokenStream;
@@ -102,7 +132,16 @@ fn extract_field_info(s: DataStruct) -> Vec<FieldInfo> {
     result
 }
 
-#[proc_macro_derive(SerializeCompact)]
+/// Derive the `Serialize` trait on a struct, ignoring member names.
+///
+/// Each field in the target struct will be serialized using only the
+/// value.  The name will be ignored.
+///
+/// The encoding will be the same as if the programmer had created a
+/// tuple-struct, or an anonymous tuple.
+///
+/// An error will result if this is used on anything that's not a struct.
+#[proc_macro_derive(Serialize_compact)]
 pub fn derive_ser(input: TokenStream) -> TokenStream {
     // parse the input into a DeriveInput syntax tree
     let input = parse_macro_input!(input as DeriveInput);
@@ -144,11 +183,15 @@ pub fn derive_ser(input: TokenStream) -> TokenStream {
     expanded.into()
 }
 
-// DeserializeCompact defines an intermediate tuple-struct, and
-// runs #[derive(Deserialize)] on that.  We then define our own
-// Deserialise wrapper that deserializes the tuple-struct and
-// performs a final conversion.
-#[proc_macro_derive(DeserializeCompact)]
+/// Derive the `Deserialize` trait on a struct, ignoring member names.
+///
+/// This implementation of `Deserialize` is meant to be the inverse of
+/// [`Serialize_compact`].
+///
+/// Because struct member names are ignored, it means that every struct
+/// with compatible types in the same order will be compatible, even
+/// if the field names are different.
+#[proc_macro_derive(Deserialize_compact)]
 pub fn derive_deser(input: TokenStream) -> TokenStream {
     // parse the input into a DeriveInput syntax tree
     let input = parse_macro_input!(input as DeriveInput);
